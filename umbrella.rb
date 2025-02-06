@@ -29,10 +29,26 @@ current_temp = currently.fetch("temperature").to_s
 current_precip_int = currently.fetch("precipIntensity").to_s
 hourly = parsed_response.fetch("hourly")
 # summary = hourly.fetch("summary")
-# pp "Right now, at " + user_location + ", the temperature is " + current_temp + "ºF, and the precipitation intensity is " + current_precip_int + ". The weather for the next hour will be " + summary.downcase + "."
+if current_precip_int.to_i == 0
+  pp "Right now, at " + user_location + ", the temperature is " + current_temp + "ºF, and it is not raining."
+else
+pp "Right now, at " + user_location + ", the temperature is " + current_temp + "ºF, and it is raining."
+end
+
 hourly_data = hourly.fetch("data")
 next_twelve = hourly_data[1..12]
 next_twelve.each do |hour|
-  pp hour
+  epoch_time = hour.fetch("time")
+  utc_time = Time.at(epoch_time)
+  seconds_from_now = utc_time - Time.now
+  hours_from_now = seconds_from_now / 60 / 60
+  rounded_hfn = hours_from_now.round
+    if rounded_hfn == 1
+       pp "In " + rounded_hfn.to_s + " hour from now:"
+    else
+      pp "In " + rounded_hfn.to_s + " hours:"
+    end
+  pp hour.fetch("summary")
+  pp hour.fetch("precipIntensity")
+  pp hour.fetch("precipProbability")
 end
-pp next_twelve.class
