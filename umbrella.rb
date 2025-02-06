@@ -29,8 +29,10 @@ current_temp = currently.fetch("temperature").to_s
 current_precip_int = currently.fetch("precipIntensity").to_s
 hourly = parsed_response.fetch("hourly")
 # summary = hourly.fetch("summary")
-# pp "Right now, at " + user_location + ", the temperature is " + current_temp + ", and the precipitation intensity is " + current_precip_int + ". The weather for the next hour will be " + summary.downcase + "."
+# pp "Right now, at " + user_location + ", the temperature is " + current_temp + "ºF, and the precipitation intensity is " + current_precip_int + ". The weather for the next hour will be " + summary.downcase + "."
 hourly_data = hourly.fetch("data")
-times = hourly_data.map(&:values).map(&:third).take(12)
-# pp times
-pp times
+next_twelve = hourly_data[1..12]
+next_twelve.each do |hour|
+  pp hour
+end
+pp next_twelve.class
