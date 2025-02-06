@@ -2,10 +2,9 @@ require "http"
 require "json"
 require "dotenv/load"
 
-pp "Hi! This is your Umbrella. To know whether it's going to rain or not, we need to know where you are! Where are you?"
-# user_location = gets.chomp
-user_location = "Clarksville, Tennessee"
-pp user_location
+puts "Hi! This is your Umbrella. To know whether it's going to rain or not, we need to know where you are! Where are you?"
+user_location = gets.chomp
+# user_location = "Clarksville, Tennessee"
 maps_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + user_location + "&key=" + ENV.fetch("GMAPS_KEY")
 
 # GEOCODING
@@ -30,25 +29,32 @@ current_precip_int = currently.fetch("precipIntensity").to_s
 hourly = parsed_response.fetch("hourly")
 # summary = hourly.fetch("summary")
 if current_precip_int.to_i == 0
-  pp "Right now, at " + user_location + ", the temperature is " + current_temp + "ºF, and it is not raining."
+  puts "Right now, in " + user_location + ", the temperature is " + current_temp + "ºF, and it is not raining."
 else
-pp "Right now, at " + user_location + ", the temperature is " + current_temp + "ºF, and it is raining."
+  puts "Right now, in " + user_location + ", the temperature is " + current_temp + "ºF, and it is raining."
 end
-
+rained = 0
 hourly_data = hourly.fetch("data")
 next_twelve = hourly_data[1..12]
 next_twelve.each do |hour|
-  epoch_time = hour.fetch("time")
-  utc_time = Time.at(epoch_time)
-  seconds_from_now = utc_time - Time.now
-  hours_from_now = seconds_from_now / 60 / 60
-  rounded_hfn = hours_from_now.round
+  # time stuff
+      epoch_time = hour.fetch("time")
+      utc_time = Time.at(epoch_time)
+      seconds_from_now = utc_time - Time.now
+      hours_from_now = seconds_from_now / 60 / 60
+      rounded_hfn = hours_from_now.round
+  if hour.fetch("summary") == "Rain" && rounded_hfn != 0
     if rounded_hfn == 1
-       pp "In " + rounded_hfn.to_s + " hour from now:"
+      puts "It will likely be raining " + rounded_hfn.to_s + " hour from now."
+      
     else
-      pp "In " + rounded_hfn.to_s + " hours:"
+      puts "It will likely be raining " + rounded_hfn.to_s + " hours from now."
     end
-  pp hour.fetch("summary")
-  pp hour.fetch("precipIntensity")
-  pp hour.fetch("precipProbability")
+    rained = 1
+  end
+end
+if rained == 0
+  puts "It doesn't look like it'll rain in the next twelve hours. There's no need to bring an umbrella today!"
+elsif rained == 1
+  puts "You should probably bring an umbrella today!"
 end
