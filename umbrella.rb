@@ -28,7 +28,7 @@ current_temp = currently.fetch("temperature").to_s
 current_precip_int = currently.fetch("precipIntensity").to_s
 hourly = parsed_response.fetch("hourly")
 # summary = hourly.fetch("summary")
-if current_precip_int.to_i == 0
+if current_precip_int == 0.0
   puts "Right now, in " + user_location + ", the temperature is " + current_temp + "ºF, and it is not raining."
 else
   puts "Right now, in " + user_location + ", the temperature is " + current_temp + "ºF, and it is raining."
