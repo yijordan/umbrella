@@ -3,8 +3,8 @@ require "json"
 require "dotenv/load"
 
 pp "Hi! This is your Umbrella. To know whether it's going to rain or not, we need to know where you are! Where are you?"
-user_location = gets.chomp
-# user_location = "474 N Lake Shore Dr"
+# user_location = gets.chomp
+user_location = "Gleacher center"
 pp user_location
 maps_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + user_location + "&key=" + ENV.fetch("GMAPS_KEY")
 
@@ -24,4 +24,7 @@ pirate_weather_url = "https://api.pirateweather.net/forecast/" + ENV.fetch("PIRA
 resp = HTTP.get(pirate_weather_url)
 raw_response = resp.to_s
 parsed_response = JSON.parse(raw_response)
-pp parsed_response
+currently = parsed_response.fetch("currently")
+current_temp = currently.fetch("temperature").to_s
+current_precip_int = currently.fetch("precipIntensity").to_s
+pp "Right now, at " + user_location + ", the temperature is " + current_temp + ", and the precipitation intensity is " + current_precip_int + "."
